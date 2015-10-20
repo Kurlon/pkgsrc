@@ -100,6 +100,29 @@ PLIST_SUBST+=	SOEXT=${SOEXT}
 PKG_OPTIONS_VAR=	PKG_OPTIONS.clang
 PKG_SUPPORTED_OPTIONS=	tests
 
+.if ${OPSYS} == "SunOS" && ${PKGSRC_COMPILER} == "gcc"
+BUILDLINK_DEPMETHOD.gcc49=	full
+.  include "../../lang/gcc49/buildlink3.mk"
+
+SUBST_CLASSES+=			fix-paths
+SUBST_STAGE.fix-paths=		pre-configure
+SUBST_MESSAGE.fix-paths=	Fixing absolute gcc paths for SunOS.
+SUBST_FILES.fix-paths=		tools/clang/lib/Driver/Tools.cpp
+SUBST_SED.fix-paths=		-e "s,@GCCLIBPATH@,${LIBGCC_PREFIX}/${GCC_TARGET_MACHINE}/,g"
+.  if exists(/usr/bin/ld)
+SUBST_SED.fix-paths+=		-e 's,getToolChain().GetProgramPath("ld"),"/usr/bin/ld",g'
+.  else
+SUBST_SED.fix-paths+=		-e 's,getToolChain().GetProgramPath("ld"),"/usr/ccs/bin/ld",g'
+.  endif
+SUBST_SED.fix-paths+=		-e 's,^.*cxa_finalize.*$$,		; //cxa_finalize.o,g'
+
+SUBST_CLASSES+=			fix-gccinc
+SUBST_STAGE.fix-gccinc=		pre-configure
+SUBST_FILES.fix-gccinc=		tools/clang/lib/Driver/ToolChains.cpp
+SUBST_FILES.fix-gccinc+=	tools/clang/lib/Frontend/InitHeaderSearch.cpp
+SUBST_SED.fix-gccinc=		-e "s,@GCCINCLUDEPATH@,${LIBGCC_PREFIX}/include/c++,g"
+.endif
+
 .include "../../mk/bsd.options.mk"
 
 .if !empty(PKG_OPTIONS:Mtests)
@@ -115,6 +138,9 @@ CMAKE_ARGS+=		-DCLANG_INCLUDE_TESTS=OFF
 
 post-extract:
 	${RUN} mkdir -p ${WRKDIR}/build
+
+pre-configure:
+	${RM} -f ${WRKSRC}/tools/clang/include/clang-c/Makefile.orig
 
 .include "../../textproc/libxml2/buildlink3.mk"
 .include "../../devel/zlib/buildlink3.mk"
