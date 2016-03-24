@@ -12,5 +12,6 @@ SHA1 (patch-af) = 1a8f15ac1c8dadd59fe00ca7ca304ba41521f896
 SHA1 (patch-ag) = 5ca9064552379792c32577875d07562d3f736ab7
 SHA1 (patch-ai) = 3742a827c4b18cde06828ff585d3130062803b9a
 SHA1 (patch-ak) = 4fee3877613afddf179a7a8376586a6391b53c89
+SHA1 (patch-doc_kcontrol_CMakeLists.txt) = c6300735d29c009322e4fdb4d58a606940fb0c62
 SHA1 (patch-kioslave_nfs_rpc__nfs2__prot__xdr.c) = f1d8dc8224e68ef323f06602bf4b856c785f15e4
 SHA1 (patch-kwalletd_backend_blowfish.h) = 23bd9bf9671a770d203a10c46dc602145d2b9457
