@@ -30,6 +30,11 @@ PYSETUPTESTTARGET?=	test
 PYSETUPTESTARGS?=	#empty
 PYSETUPSUBDIR?=		#empty
 
+pre-patch: fixup-python-writeable-source
+.PHONY: fixup-python-writeable-source
+fixup-python-writeable-source:
+	${FIND} ${WRKSRC} -type f -exec ${CHMOD} go-w {} \;
+
 do-build:
 	(cd ${WRKSRC}/${PYSETUPSUBDIR} && ${SETENV} ${MAKE_ENV} ${PYTHONBIN} \
 	 ${PYSETUP} ${PYSETUPARGS} ${PYSETUPBUILDTARGET} ${PYSETUPBUILDARGS})
